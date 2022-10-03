@@ -1,0 +1,3 @@
+SCHOOL_NAME = 'Masomo Academy'
+
+CLASS_DURATION = 2
