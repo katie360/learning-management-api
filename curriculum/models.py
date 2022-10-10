@@ -143,6 +143,10 @@ class TimeTable(models.Model):
    def get_teacher(self):
       return self.teacher.user.first_name + ' ' + self.teacher.user.last_name
 
+   @property
+   def get_class(self):
+      return self.subject.subject_class.name
+
 
 class Assignment(models.Model):
    subject = models.ForeignKey(Subject,on_delete=models.CASCADE)

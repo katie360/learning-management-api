@@ -49,6 +49,10 @@ class AskQuestionAnswerSerializer(serializers.ModelSerializer):
 class TimeTableSerializer(serializers.ModelSerializer):
    get_subject = serializers.ReadOnlyField()
    get_teacher = serializers.ReadOnlyField()
+   get_class = serializers.ReadOnlyField()
+
+   start_time = serializers.DateTimeField(format='%I:%M%p')
+   end_time = serializers.DateTimeField(format='%I:%M%p')
    class Meta:
       model = TimeTable
       fields = '__all__'
