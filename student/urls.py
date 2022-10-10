@@ -11,5 +11,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('student-user/', views.get_student_data, name='get_student_data'),
     path('subjects-enrolled/', views.get_subjects_enrolled, name='get_subjects_enrolled'),
+    path('student-timetable/', views.get_student_timetable, name='get_student_timetable'),
    
 ]
