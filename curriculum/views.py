@@ -4,8 +4,8 @@ from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import AskQuestion, Class, Curriculum, Resource, ResourceChapter, ResourceTextbook, Subject, TimeTable
-from .serializers import  AskQuestionSerializer, ClassSerializer, CurriculumSerializer, ResourceChapterSerializer, ResourceSerializer, ResourceTextbookSerializer, SubjectSerializer, TimeTableSerializer
+from .models import AskQuestion, Assignment, Class, Curriculum, Resource, ResourceChapter, ResourceTextbook, Subject, TimeTable
+from .serializers import  AskQuestionSerializer, AssignmentSerializer, ClassSerializer, CurriculumSerializer, ResourceChapterSerializer, ResourceSerializer, ResourceTextbookSerializer, SubjectSerializer, TimeTableSerializer
 
 
 class CurriculumViewSet(viewsets.ModelViewSet):
@@ -90,4 +90,10 @@ def get_general_timetable(request):
 
    return Response(serializer.data)
 
+@api_view(['GET'])
+def get_assignments(request):
+   assignments = Assignment.objects.all()
+   serializer = AssignmentSerializer(assignments, many=True)
+
+   return Response(serializer.data)
 

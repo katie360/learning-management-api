@@ -162,6 +162,14 @@ class Assignment(models.Model):
    
    def __str__(self):
       return self.name
+
+   @property
+   def get_subject(self):
+      return self.subject.name
+
+   @property
+   def get_teacher(self):
+      return self.teacher.user.first_name + ' ' + self.teacher.user.last_name
       
    
 class TestAndQuiz(models.Model):
