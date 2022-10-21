@@ -84,4 +84,27 @@ class AssignmentSerializer(serializers.ModelSerializer):
    class Meta:
       model = Assignment
       fields = '__all__'
+
+class AssignmentDetailSerializer(serializers.ModelSerializer):
+   get_subject = serializers.ReadOnlyField()
+   get_teacher = serializers.ReadOnlyField()
+   get_file_name = serializers.ReadOnlyField()
+   get_file_size = serializers.ReadOnlyField()
+   get_formatted_due_date = serializers.ReadOnlyField()
+
+   date_created = serializers.DateTimeField(format='%b %d,%Y %I:%M%p')
+   date_due = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
+
+   def to_representation(self, instance):
+      data = super().to_representation(instance)
+      data['submitted'] = self.context.get('submitted')
+      data['score'] = self.context.get('score')
+      data['date_submitted'] = self.context.get('date_submitted')
+      data['comment'] = self.context.get('comment')
+      data['uploaded_file'] = self.context.get('uploaded_file')
+      return data
+
+   class Meta:
+      model = Assignment
+      fields = '__all__'
    

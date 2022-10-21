@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from student.models import Student, StudentAssignment
 from .models import AskQuestion, Assignment, Class, Curriculum, Resource, ResourceChapter, ResourceTextbook, Subject, TimeTable
-from .serializers import  AskQuestionSerializer, AssignmentSerializer, ClassSerializer, CurriculumSerializer, ResourceChapterSerializer, ResourceSerializer, ResourceTextbookSerializer, SubjectSerializer, TimeTableSerializer
+from .serializers import  AskQuestionSerializer, AssignmentDetailSerializer, AssignmentSerializer, ClassSerializer, CurriculumSerializer, ResourceChapterSerializer, ResourceSerializer, ResourceTextbookSerializer, SubjectSerializer, TimeTableSerializer
 
 
 class CurriculumViewSet(viewsets.ModelViewSet):
@@ -136,10 +136,37 @@ def get_assignment_detail(request, pk):
    if user.is_authenticated:
       student = Student.objects.get(user=user)
       assignment = Assignment.objects.get(id=pk)
-      submitted_assignments = StudentAssignment.objects.filter(student=student, assignment=assignment)
-      if assignment.id in submitted_assignments.values_list('assignment', flat=True):
-         assignment.submitted = True
-      else:
+      try:
+         submitted_assignment = StudentAssignment.objects.get(student=student, assignment=assignment)
+         print(submitted_assignment)
+         if submitted_assignment is not None:
+            assignment.submitted = True
+            assignment.score = submitted_assignment.score
+            date_submitted = submitted_assignment.date_submitted
+            assignment.date_submitted = date_submitted.strftime("%b %d,%Y %I:%M%p")
+            assignment.comment = submitted_assignment.comment
+            if submitted_assignment.upload:
+               assignment.file = submitted_assignment.upload.name
+         else:
+            assignment.submitted = False
+            if assignment.date_due < timezone.now():
+               assignment.due_date_passed = True
+               print("Due date passed")
+            else:
+               assignment.due_date_passed = False
+               print("Due date not passed")
+
+         if submitted_assignment.upload:
+            serializer = AssignmentDetailSerializer(assignment, context={'request': request, 'submitted': assignment.submitted, 'score': assignment.score, 'date_submitted': assignment.date_submitted, 'comment': assignment.comment, 'uploaded_file': assignment.file,})
+            return Response(serializer.data)
+         else:
+            serializer = AssignmentDetailSerializer(assignment, context={'request': request, 'submitted': assignment.submitted, 'score': assignment.score, 'date_submitted': assignment.date_submitted, 'comment': assignment.comment,})
+            
+            if not serializer.data:
+               return Response("null")
+            return Response(serializer.data)
+      except:
+         submitted_assignment = None
          assignment.submitted = False
          if assignment.date_due < timezone.now():
             assignment.due_date_passed = True
@@ -147,14 +174,14 @@ def get_assignment_detail(request, pk):
          else:
             assignment.due_date_passed = False
             print("Due date not passed")
-      print(submitted_assignments)
-      today = datetime.now()
-      print(today)
-      
-      serializer = AssignmentSerializer(assignment, context={'request': request, 'submitted': assignment.submitted,})
-      if not serializer.data:
-         return Response("null")
-      return Response(serializer.data, )
+         print(submitted_assignment)
+         today = datetime.now()
+         print(today)
+
+         serializer = AssignmentDetailSerializer(assignment, context={'request': request, 'submitted': assignment.submitted})
+         if not serializer.data:
+            return Response("null")
+         return Response(serializer.data, )
    else:
       return Response('User is not authenticated', status=401)
 
