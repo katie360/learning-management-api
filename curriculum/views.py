@@ -101,19 +101,30 @@ def get_assignments(request):
       student = Student.objects.get(user=user)
       assignments = Assignment.objects.all()
       submitted_assignments = StudentAssignment.objects.filter(student=student).filter(assignment__in=assignments)
+
+      # Create an empty list to store the assignments
+      assignment_list = []
       submitted_assignments_list = StudentAssignment.objects.filter(student=student).filter(assignment__in=assignments).values_list('assignment', flat=True)
       for assignment in assignments:
          if assignment.id in submitted_assignments_list:
             assignment.submitted = True
+            assignment_list.append(assignment)
          else:
             assignment.submitted = False
-      print(submitted_assignments_list)
-      # serializer = AssignmentSerializer(assignments, many=True)
-      serializer = AssignmentSerializer(assignments, many=True, context={'request': request, 'submitted': assignment.submitted,})
+            assignment_list.append(assignment)
+
+      print(assignment_list)
+      print(assignments)
+      for assignment in assignment_list:
+         print(assignment.submitted)
+      
+      # update assignmens queryset with submitted value
+      assignments = assignments
+      serializer = AssignmentSerializer(assignment_list, many=True)
+      # serializer = AssignmentSerializer(assignments, many=True, context={'request': request, 'submitted': assignment.submitted})
       if not serializer.data:
          return Response("null")
       return Response(serializer.data, )
-      return Response(serializer.data)
    else:
       return Response('User is not authenticated', status=401)
 

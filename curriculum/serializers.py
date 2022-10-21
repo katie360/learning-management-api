@@ -64,13 +64,22 @@ class AssignmentSerializer(serializers.ModelSerializer):
    get_file_size = serializers.ReadOnlyField()
    get_formatted_due_date = serializers.ReadOnlyField()
 
-   # date_created = serializers.DateTimeField(format='%b %d,%Y %I:%M%p')
-   # date_due = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
+   date_created = serializers.DateTimeField(format='%b %d,%Y %I:%M%p')
+   date_due = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
 
-   def to_representation(self, obj):
-        data = super().to_representation(obj)
-        data['submitted'] = self.context.get('submitted')
-        return data 
+   # Add a field to the serializer
+   submitted = serializers.SerializerMethodField()
+
+   def get_submitted(self, obj):
+      assignment = obj
+      submitted = assignment.submitted
+      return submitted
+
+
+   # def to_representation(self, instance):
+   #    data = super().to_representation(instance)
+   #    data['submitted'] = self.context.get('submitted')
+   #    return data
 
    class Meta:
       model = Assignment
