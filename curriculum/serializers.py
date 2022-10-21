@@ -60,9 +60,19 @@ class TimeTableSerializer(serializers.ModelSerializer):
 class AssignmentSerializer(serializers.ModelSerializer):
    get_subject = serializers.ReadOnlyField()
    get_teacher = serializers.ReadOnlyField()
+   get_file_name = serializers.ReadOnlyField()
+   get_file_size = serializers.ReadOnlyField()
+   get_formatted_due_date = serializers.ReadOnlyField()
 
-   date_created = serializers.DateTimeField(format='%b %d,%Y %I:%M%p')
-   date_due = serializers.DateTimeField(format='%b %d,%Y %I:%M%p')
+   # date_created = serializers.DateTimeField(format='%b %d,%Y %I:%M%p')
+   # date_due = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
+
+   def to_representation(self, obj):
+        data = super().to_representation(obj)
+        data['submitted'] = self.context.get('submitted')
+        return data 
+
    class Meta:
       model = Assignment
       fields = '__all__'
+   

@@ -1,8 +1,11 @@
+import os
 from django.db import models
 from teacher.models import Teacher
 from manager.models import Manager
 from account.models import Account
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.utils import timezone
+
 
 
 DAYS = (
@@ -170,6 +173,30 @@ class Assignment(models.Model):
    @property
    def get_teacher(self):
       return self.teacher.user.first_name + ' ' + self.teacher.user.last_name
+
+   @property
+   def get_formatted_due_date(self):
+      date_due = timezone.localtime(self.date_due)
+      return date_due.strftime('%b %d,%Y %I:%M%p')
+
+   @property
+   def get_file_name(self):
+      file_name = self.file.name.split('/')[-1]
+      file_name = file_name.split('.')[0]
+      return file_name
+      # return os.path.basename(self.file.name)
+   
+   @property
+   def get_file_size(self):
+      file_size = self.file.size
+      if file_size < 1024:
+         return str(file_size) + ' Bytes'
+      elif file_size < 1048576:
+         return str(round(file_size/1024, 2)) + ' KB'
+      elif file_size < 1073741824:
+         return str(round(file_size/1048576, 2)) + ' MB'
+      
+      
       
    
 class TestAndQuiz(models.Model):

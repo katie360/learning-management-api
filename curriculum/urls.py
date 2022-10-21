@@ -22,4 +22,5 @@ urlpatterns = [
    path('asked-questions/', views.get_asked_questions, name='asked_questions'),
    path('general-timetable/', views.get_general_timetable, name='general_timetable'),
    path('assignments/', views.get_assignments, name='assignments'),
+   path('assignment/<str:pk>/', views.get_assignment_detail, name='assignment_detail'),
 ]
