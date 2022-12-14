@@ -194,10 +194,7 @@ class Assignment(models.Model):
       elif file_size < 1048576:
          return str(round(file_size/1024, 2)) + ' KB'
       elif file_size < 1073741824:
-         return str(round(file_size/1048576, 2)) + ' MB'
-      
-      
-      
+         return str(round(file_size/1048576, 2)) + ' MB'  
    
 class TestAndQuiz(models.Model):
    subject = models.ForeignKey(Subject,on_delete=models.CASCADE)
@@ -288,6 +285,19 @@ class Exam(models.Model):
    
    def __str__(self):
       return self.subject.name
+
+   @property
+   def get_subject(self):
+      return self.subject.name
+
+   @property
+   def get_teacher(self):
+      return self.teacher.user.first_name + ' ' + self.teacher.user.last_name
+
+   @property
+   def get_formatted_exam_date(self):
+      exam_date = timezone.localtime(self.exam_date)
+      return exam_date.strftime('%b %d,%Y %I:%M%p')
    
 class Question(models.Model):
    choices_type = (

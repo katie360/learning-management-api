@@ -2,10 +2,10 @@ import json
 from django.shortcuts import render
 from rest_framework import viewsets
 
-from curriculum.models import TimeTable
+from curriculum.models import Exam, StudentAnnouncement, TimeTable
 from curriculum.serializers import TimeTableSerializer
 from .models import Student
-from .serializers import StudentSerializer
+from .serializers import StudentAnnouncementSerializer, StudentExamSerializer, StudentSerializer
 from django.contrib.auth import login
 from rest_framework.response import Response
 from rest_framework import generics, permissions, serializers
@@ -90,3 +90,39 @@ def get_student_timetable(request):
     else:
         return Response('User is not authenticated', status=401)
 
+@api_view(['GET'])
+def get_student_announcements(request):
+    user = request.user
+
+    if user.is_authenticated:
+        student = Student.objects.get(user=user)
+        announcements = StudentAnnouncement.objects.all()
+        serializer = StudentAnnouncementSerializer(announcements, many=True)
+        return Response(serializer.data)
+    else:
+        return Response('User is not authenticated', status=401)
+
+
+@api_view(['GET'])
+def get_student_announcement_detail(request, id):
+    user = request.user
+
+    if user.is_authenticated:
+        announcement = StudentAnnouncement.objects.get(id=id)
+        serializer = StudentAnnouncementSerializer(announcement)
+        return Response(serializer.data)
+    else:
+        return Response('User is not authenticated', status=401)
+
+
+@api_view(['GET'])
+def get_student_exams(request):
+    user = request.user
+
+    if user.is_authenticated:
+        student = Student.objects.get(user=user)
+        exams = Exam.objects.filter(subject__in = student.subject.all())
+        serializer = StudentExamSerializer(exams, many=True)
+        return Response(serializer.data)
+    else:
+        return Response('User is not authenticated', status=401)
