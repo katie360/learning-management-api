@@ -1,7 +1,7 @@
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -186,4 +186,64 @@ def get_assignment_detail(request, pk):
       return Response('User is not authenticated', status=401)
 
 
+@api_view(['GET'])
+def get_cbc_classes(request):
+    user = request.user
 
+    if user.is_authenticated:
+        student = Student.objects.get(user=user)
+        classes = Class.objects.filter(curriculum__name = 'CBC')
+        serializer = ClassSerializer(classes, many=True)
+        return Response(serializer.data)
+    else:
+        return Response('User is not authenticated', status=401)
+
+@api_view(['GET'])
+def get_8_4_4_classes(request):
+    user = request.user
+
+    if user.is_authenticated:
+        student = Student.objects.get(user=user)
+        classes = Class.objects.filter(curriculum__name = '8-4-4')
+        serializer = ClassSerializer(classes, many=True)
+        return Response(serializer.data)
+    else:
+        return Response('User is not authenticated', status=401)
+
+@api_view(['GET'])
+def get_subjects(request, id):
+    user = request.user
+
+    if user.is_authenticated:
+        student = Student.objects.get(user=user)
+        subjects = Subject.objects.filter(subject_class_id=id)
+        serializer = SubjectSerializer(subjects, many=True)
+        return Response(serializer.data)
+    else:
+        return Response('User is not authenticated', status=401)
+
+
+
+@api_view(['GET' , 'POST'])
+def register_subjects(request):
+   user = request.user
+
+   if user.is_authenticated:
+      student = Student.objects.get(user=user)
+      if request.method == 'GET':
+         subjects = Subject.objects.all()
+         serializer = SubjectSerializer(subjects, many=True)
+         return Response(serializer.data)
+      elif request.method == 'POST':
+         serializer = SubjectSerializer(data=request.data)
+         print(request.data)
+         data = request.data["subjects"]
+         print(data)
+         for subject in data:
+            print(subject)
+            subject = Subject.objects.get(id=subject['id'])
+            student.subject.add(subject)
+            
+         return Response("Subjects added")
+   else:
+      return Response('User is not authenticated', status=401)

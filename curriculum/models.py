@@ -49,10 +49,17 @@ class Class(models.Model):
    name = models.CharField(max_length=100)
    curriculum = models.ForeignKey(Curriculum, on_delete=models.CASCADE)
    code = models.CharField(max_length=10, unique=True)
-   plural = 'Classes'
+
+   class Meta:
+        verbose_name_plural = "classes"
 
    def __str__(self):
       return self.name
+
+   @property
+   def get_curriculum(self):
+      return self.curriculum.name
+
    
 class Subject(models.Model):
    name = models.CharField(max_length=100)

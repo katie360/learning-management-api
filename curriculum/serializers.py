@@ -8,6 +8,8 @@ class CurriculumSerializer(serializers.ModelSerializer):
       
       
 class ClassSerializer(serializers.ModelSerializer):
+   get_curriculum = serializers.ReadOnlyField()
+
    class Meta:
       model = Class
       fields = '__all__'

@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 
 from curriculum.models import Exam, StudentAnnouncement, TimeTable
-from curriculum.serializers import TimeTableSerializer
+from curriculum.serializers import SubjectSerializer, TimeTableSerializer
 from .models import Student
 from .serializers import StudentAnnouncementSerializer, StudentExamSerializer, StudentSerializer
 from django.contrib.auth import login
@@ -53,8 +53,8 @@ def get_subjects_enrolled(request):
     if user.is_authenticated:
         student = Student.objects.get(user=user)
         subjects = student.subject.all()
-        print(subjects)
-        return JsonResponse({'subjects': list(subjects.values())})
+        serializer = SubjectSerializer(subjects, many=True)
+        return Response(serializer.data)
     else:
         return Response('User is not authenticated', status=401)
 
@@ -126,3 +126,4 @@ def get_student_exams(request):
         return Response(serializer.data)
     else:
         return Response('User is not authenticated', status=401)
+

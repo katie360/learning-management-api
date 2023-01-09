@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Curriculum, Exam, StudentAnnouncement, Subject, Class, Resource, ResourceChapter, ResourcePlanBoost, ResourceTextbook, AskQuestion, AskQuestionAnswer, TimeTable, Assignment
+from .models import Curriculum, Exam, Question, StudentAnnouncement, Subject, Class, Resource, ResourceChapter, ResourcePlanBoost, ResourceTextbook, AskQuestion, AskQuestionAnswer, TimeTable, Assignment
 
 admin.site.register(Curriculum)
 admin.site.register(Subject)
@@ -14,3 +14,4 @@ admin.site.register(TimeTable)
 admin.site.register(Assignment)
 admin.site.register(StudentAnnouncement)
 admin.site.register(Exam)
+admin.site.register(Question)
