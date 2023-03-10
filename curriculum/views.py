@@ -7,8 +7,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from student.models import Student, StudentAssignment
-from .models import AskQuestion, Assignment, Class, Curriculum, Resource, ResourceChapter, ResourceTextbook, Subject, TimeTable
-from .serializers import  AskQuestionSerializer, AssignmentDetailSerializer, AssignmentSerializer, ClassSerializer, CurriculumSerializer, ResourceChapterSerializer, ResourceSerializer, ResourceTextbookSerializer, SubjectSerializer, TimeTableSerializer
+from .models import AskQuestion, Assignment, Class, Curriculum, Resource, ResourceChapter, ResourcePlanBoost, ResourceTextbook, Subject, TimeTable
+from .serializers import  AskQuestionSerializer, AssignmentDetailSerializer, AssignmentSerializer, ClassSerializer, CurriculumSerializer, ResourceChapterSerializer, ResourcePlanBoostSerializer, ResourceSerializer, ResourceTextbookSerializer, SubjectSerializer, TimeTableSerializer
 
 
 class CurriculumViewSet(viewsets.ModelViewSet):
@@ -77,7 +77,7 @@ def get_resource_textbooks_paid(request):
 @api_view(['GET', 'POST'])
 def get_asked_questions(request):
    if request.method == 'GET':
-      asked_questions = AskQuestion.objects.all()
+      asked_questions = AskQuestion.objects.all().order_by('-date_created')
       serializer = AskQuestionSerializer(asked_questions, many=True)
       return Response(serializer.data)
    elif request.method == 'POST':
@@ -247,3 +247,16 @@ def register_subjects(request):
          return Response("Subjects added")
    else:
       return Response('User is not authenticated', status=401)
+
+@api_view(['GET'])
+def get_resource_plan_boost(request):
+   user = request.user
+
+   if user.is_authenticated:
+      student = Student.objects.get(user=user)
+      boosts = ResourcePlanBoost.objects.all()
+      serializer = ResourcePlanBoostSerializer(boosts, many=True)
+      return Response(serializer.data)
+   else:
+      return Response('User is not authenticated', status=401)
+      

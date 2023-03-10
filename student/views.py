@@ -1,9 +1,9 @@
 import json
 from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 
 from curriculum.models import Exam, StudentAnnouncement, TimeTable
-from curriculum.serializers import SubjectSerializer, TimeTableSerializer
+from curriculum.serializers import AskQuestionSerializer, SubjectSerializer, TimeTableSerializer
 from .models import Student
 from .serializers import StudentAnnouncementSerializer, StudentExamSerializer, StudentSerializer
 from django.contrib.auth import login
@@ -16,6 +16,7 @@ from django.http import JsonResponse, HttpResponse
 
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
+
 
 
 class StudentViewSet(viewsets.ModelViewSet):
@@ -124,6 +125,27 @@ def get_student_exams(request):
         exams = Exam.objects.filter(subject__in = student.subject.all())
         serializer = StudentExamSerializer(exams, many=True)
         return Response(serializer.data)
+    else:
+        return Response('User is not authenticated', status=401)
+
+@api_view(['POST'])
+def student_ask_question(request):
+    user = request.user
+
+    if user.is_authenticated:
+        student = Student.objects.get(user=user)
+        question = request.data['question']
+        created_by = student.id
+        data = {'question': question, 'created_by': created_by}
+        print(question)
+        # save question to database table ask_question
+        serializer = AskQuestionSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response('Question asked successfully', status=status.HTTP_201_CREATED)
+        else:
+            print(serializer.errors)
+            return Response('Question not asked', status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response('User is not authenticated', status=401)
 

@@ -27,4 +27,5 @@ urlpatterns = [
    path('8-4-4-classes/', views.get_8_4_4_classes, name='8_4_4_classes'),
    path('get-subjects/<int:id>', views.get_subjects, name='get_subjects'),
    path('register-subjects/', views.register_subjects, name='register_subjects'),
+   path('resource-plan-boost/', views.get_resource_plan_boost, name='resource_plan_boost'),
 ]

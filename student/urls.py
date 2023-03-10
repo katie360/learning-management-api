@@ -15,4 +15,5 @@ urlpatterns = [
     path('student-announcements/', views.get_student_announcements, name='get_student_announcements'),
     path('student-announcement-detail/<int:id>/', views.get_student_announcement_detail, name='get_student_announcement_detail'),
     path('student-exams/', views.get_student_exams, name='get_student_exams'),
+    path('student-ask-question/', views.student_ask_question, name='student_ask_question'),
 ]

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from curriculum.models import Exam, StudentAnnouncement
+from curriculum.models import AskQuestion, Exam, StudentAnnouncement
 from .models import Student
 
 
@@ -27,4 +27,9 @@ class StudentExamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exam
+        fields = '__all__'
+
+class StudentAskQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AskQuestion
         fields = '__all__'

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import AskQuestion, AskQuestionAnswer, Assignment, Curriculum, Resource, ResourceChapter, ResourceTextbook, Subject, Class, TimeTable
+from .models import AskQuestion, AskQuestionAnswer, Assignment, Curriculum, Resource, ResourceChapter, ResourcePlanBoost, ResourceTextbook, Subject, Class, TimeTable
 
 class CurriculumSerializer(serializers.ModelSerializer):
    class Meta:
@@ -110,3 +110,9 @@ class AssignmentDetailSerializer(serializers.ModelSerializer):
       model = Assignment
       fields = '__all__'
    
+
+class ResourcePlanBoostSerializer(serializers.ModelSerializer):
+   get_subject = serializers.ReadOnlyField()
+   class Meta:
+      model = ResourcePlanBoost
+      fields = '__all__'

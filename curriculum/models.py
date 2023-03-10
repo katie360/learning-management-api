@@ -35,6 +35,16 @@ TERM_EXAM = (
     ('End Term', 'End Term'),
     ('Holiday', 'Holiday'),
 )
+
+RECOMMENDABLE_RESOURCE_TYPES = (
+   ('Revision Materials', 'Revision Materials'),
+   ('Textbooks', 'Textbooks'),
+)
+
+REVISION_MATERIAL_TYPES = (
+   ('Exams', 'Exams'),
+   ('Revision Books', 'Revision Books'),
+)
    
 class Curriculum(models.Model):
    name = models.CharField(max_length=100)
@@ -72,6 +82,7 @@ class Subject(models.Model):
    
 class Resource(models.Model):
    name = models.CharField(max_length=100)
+   term = models.CharField(max_length=10,choices=TERM)
    date_created = models.DateTimeField(auto_now_add=True)
    date_edited = models.DateTimeField(auto_now=True)
    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='subject')
@@ -115,9 +126,15 @@ class ResourcePlanBoost(models.Model):
    def __str__(self):
       return self.name
 
+   @property
+   def get_subject(self):
+      return self.subject.name
+
 
 class ResourceTextbook(models.Model):
    name = models.CharField(max_length=100)
+   resource_type = models.CharField(max_length=200,choices=RECOMMENDABLE_RESOURCE_TYPES)
+   revision_material_type = models.CharField(max_length=200,choices=REVISION_MATERIAL_TYPES, blank=True, null=True)
    file = models.FileField(upload_to='resources/', blank=True, null=True)
    link = models.URLField(blank=True, null=True)
    date_created = models.DateTimeField(auto_now_add=True)
